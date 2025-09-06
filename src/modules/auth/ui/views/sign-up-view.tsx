@@ -4,7 +4,10 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { OctagonAlertIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
+import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { FaGoogle, FaGithub } from "react-icons/fa"
 
 import { authClient } from "@/lib/auth-client"
 import { Input } from "@/components/ui/input"
@@ -19,8 +22,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
 
 const formSchema = z
   .object({
@@ -35,7 +36,6 @@ const formSchema = z
   })
 
 export function SignUpView() {
-  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
@@ -49,6 +49,8 @@ export function SignUpView() {
     },
   })
 
+  const router = useRouter()
+
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     setError(null)
     setPending(true)
@@ -58,11 +60,33 @@ export function SignUpView() {
         name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
           setPending(false)
           router.push("/")
+        },
+        onError: ({ error }) => {
+          setPending(false)
+          setError(error.message)
+        },
+      },
+    )
+  }
+
+  const onSocial = (provider: "github" | "google") => {
+    setError(null)
+    setPending(true)
+
+    authClient.signIn.social(
+      {
+        provider: provider,
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setPending(false)
         },
         onError: ({ error }) => {
           setPending(false)
@@ -181,16 +205,18 @@ export function SignUpView() {
                     type="button"
                     className="w-full"
                     disabled={pending}
+                    onClick={() => onSocial("google")}
                   >
-                    Google
+                    <FaGoogle />
                   </Button>
                   <Button
                     variant="outline"
                     type="button"
                     className="w-full"
                     disabled={pending}
+                    onClick={() => onSocial("github")}
                   >
-                    Github
+                    <FaGithub />
                   </Button>
                 </div>
                 <div className="text-center text-sm">
@@ -207,11 +233,7 @@ export function SignUpView() {
           </Form>
 
           <div className="bg-radial from-green-700 to-green-900 relative hidden md:flex flex-col gap-y-4 items-center justify-center">
-            <img
-              src="/logo.svg"
-              alt="Image"
-              className="h-[92px] w-[92px]"
-            ></img>
+            <img src="/logo.svg" alt="logo" className="h-[92px] w-[92px]"></img>
             <p className="text-2xl font-semibold text-white">Meet.AI</p>
           </div>
         </CardContent>
