@@ -1,19 +1,18 @@
 "use client"
 
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { OctagonAlertIcon } from "lucide-react"
-import { useForm } from "react-hook-form"
+import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { FaGoogle, FaGithub } from "react-icons/fa"
-
-import { authClient } from "@/lib/auth-client"
-import { Input } from "@/components/ui/input"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { FaGithub, FaGoogle } from "react-icons/fa"
+import { z } from "zod"
+import { Alert, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Alert, AlertTitle } from "@/components/ui/alert"
+
 import {
   Form,
   FormControl,
@@ -22,6 +21,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { authClient } from "@/lib/auth-client"
 
 const formSchema = z.object({
   email: z.email(),
@@ -184,12 +185,8 @@ export function SignInView() {
             </form>
           </Form>
 
-          <div className="bg-radial from-green-700 to-green-900 relative hidden md:flex flex-col gap-y-4 items-center justify-center">
-            <img
-              src="/logo.svg"
-              alt="Image"
-              className="h-[92px] w-[92px]"
-            ></img>
+          <div className="bg-radial from-sidebar-accent to-sidebar relative hidden md:flex flex-col gap-y-4 items-center justify-center">
+            <Image src="/logo.svg" alt="Image" width={92} height={92} />
             <p className="text-2xl font-semibold text-white">Meet.AI</p>
           </div>
         </CardContent>
